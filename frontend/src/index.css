@@ -18,10 +18,21 @@ header a {
   text-decoration: none;
 }
 
-.products {
-  border: 1px #404040 solid;
+main {
+  padding: 1rem;
 }
 
-.products img {
+.products {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.product {
+  border: 1px #404040 solid;
+  margin: 1rem;
+}
+
+.product img {
   width: 100%;
 }
