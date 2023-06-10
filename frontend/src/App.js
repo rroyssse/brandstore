@@ -13,7 +13,7 @@ function App() {
   return (
     <BrowserRouter>
       <div className="d-flex flex-column site-container">
-        <header className="App-header">
+        <header>
           <Navbar bg="dark" variant="dark">
             <Container>
               <LinkContainer to="/">

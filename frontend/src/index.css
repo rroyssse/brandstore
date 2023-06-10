@@ -15,10 +15,20 @@ main {
   flex: 1;
 }
 
+/*колір кнопок*/
+.btn-primary {
+  background-color: #f0c040;
+}
+
 .products {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+}
+
+/*колір зірочок*/
+.rating span {
+  color: #ffc000;
 }
 
 .product {
