@@ -33,7 +33,6 @@ import ProductEditScreen from './screens/ProductEditScreen';
 import OrderListScreen from './screens/OrderListScreen';
 import UserListScreen from './screens/UserListScreen';
 import UserEditScreen from './screens/UserEditScreen';
-import CategoryScreen from './screens/CategoryScreen';
 
 function App() {
   const { state, dispatch: ctxDispatch } = useContext(Store);
@@ -152,7 +151,7 @@ function App() {
             {categories.map((category) => (
               <Nav.Item key={category}>
                 <LinkContainer
-                  to={`/categories/${category}`}
+                  to={`search/category=${category}`}
                   onClick={() => setSidebarIsOpen(false)}
                 >
                   <Nav.Link>{category}</Nav.Link>
@@ -198,12 +197,6 @@ function App() {
                 path="/shipping"
                 element={<ShippingAddressScreen />}
               ></Route>
-              <Route
-                path="/categories/:category"
-                element={<CategoryScreen />}
-              />
-
-              {/* <Route path="/signup" element={<SignupScreen />} /> */}
               <Route path="/payment" element={<PaymentMethodScreen />}></Route>
               {/* Admin Routes */}
               <Route

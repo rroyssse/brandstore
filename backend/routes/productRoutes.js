@@ -182,16 +182,6 @@ productRouter.get(
   })
 );
 
-productRouter.get('/categories/:category', async (req, res) => {
-  try {
-    const category = req.params.category;
-    const products = await Product.find().distinct('category');
-    res.send(products);
-  } catch (error) {
-    res.status(500).send({ message: error.message });
-  }
-});
-
 productRouter.get('/slug/:slug', async (req, res) => {
   const product = await Product.findOne({ slug: req.params.slug });
   if (product) {
