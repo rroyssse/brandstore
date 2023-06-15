@@ -68,6 +68,9 @@ export default function SearchScreen() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        console.log(
+          `/api/products/search?page=${page}&query=${query}&category=${category}&price=${price}&brand=${brand}&order=${order}`
+        );
         const { data } = await axios.get(
           `/api/products/search?page=${page}&query=${query}&category=${category}&price=${price}&brand=${brand}&order=${order}`
         );
@@ -116,7 +119,7 @@ export default function SearchScreen() {
     const filterBrand = filter.brand || brand;
     const filterPrice = filter.price || price;
     const sortOrder = filter.order || order;
-    return `/search?category=${filterCategory}&query=${filterQuery}&price=${filterPrice}&rating=${filterBrand}&order=${sortOrder}&page=${filterPage}`;
+    return `/search?category=${filterCategory}&query=${filterQuery}&price=${filterPrice}&brand=${filterBrand}&order=${sortOrder}&page=${filterPage}`;
   };
   return (
     <div>
@@ -210,7 +213,7 @@ export default function SearchScreen() {
                     {query !== 'all' && ' : ' + query}
                     {category !== 'all' && ' : ' + category}
                     {price !== 'all' && ' : Price ' + price}
-                    {brand !== 'all' && ' : Rating ' + brand}
+                    {brand !== 'all' && ' : Brand ' + brand}
                     {query !== 'all' ||
                     category !== 'all' ||
                     brand !== 'all' ||

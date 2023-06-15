@@ -34,10 +34,13 @@ function Product(props) {
         <img src={product.image} className="card-img-top" alt={product.name} />
       </Link>
       <Card.Body>
-        <Link to={`/product/${product.slug}`}>
+        <Link
+          to={`/product/${product.slug}`}
+          style={{ color: 'black', textDecoration: 'none' }}
+        >
           <Card.Title>{product.name}</Card.Title>
         </Link>
-        <Rating rating={product.rating} numReviews={product.numReciews} />
+        <Card.Text>{product.brand}</Card.Text>
         <Card.Text>${product.price}</Card.Text>
         {product.countInStock === 0 ? (
           <Button variant="light" disabled>

@@ -16,16 +16,15 @@ productRouter.post(
   isAdmin,
   expressAsyncHandler(async (req, res) => {
     const newProduct = new Product({
-      name: 'sample name ' + Date.now(),
-      slug: 'sample-name-' + Date.now(),
+      name: 'name ' + Date.now(),
+      slug: 'sample-slug-' + Date.now(),
       image: '/images/p1.jpg',
       price: 0,
-      category: 'sample category',
-      brand: 'sample brand',
+      category: 'category',
+      brand: 'brand',
       countInStock: 0,
-      rating: 0,
-      numReviews: 0,
-      description: 'sample description',
+      fabric: 'fabric',
+      description: 'description',
     });
     const product = await newProduct.save();
     res.send({ message: 'Product Created', product });
@@ -47,6 +46,7 @@ productRouter.put(
       product.category = req.body.category;
       product.brand = req.body.brand;
       product.countInStock = req.body.countInStock;
+      product.fabric = req.body.fabric;
       product.description = req.body.description;
       await product.save();
       res.send({ message: 'Product Updated' });
@@ -104,7 +104,7 @@ productRouter.get(
     const page = query.page || 1;
     const category = query.category || '';
     const price = query.price || '';
-    const rating = query.rating || '';
+    const brand = query.brand || '';
     const order = query.order || '';
     const searchQuery = query.query || '';
 
@@ -118,14 +118,7 @@ productRouter.get(
           }
         : {};
     const categoryFilter = category && category !== 'all' ? { category } : {};
-    const ratingFilter =
-      rating && rating !== 'all'
-        ? {
-            rating: {
-              $gte: Number(rating),
-            },
-          }
-        : {};
+    const brandFilter = brand && brand !== 'all' ? { brand } : {};
     const priceFilter =
       price && price !== 'all'
         ? {
@@ -143,8 +136,6 @@ productRouter.get(
         ? { price: 1 }
         : order === 'highest'
         ? { price: -1 }
-        : order === 'toprated'
-        ? { rating: -1 }
         : order === 'newest'
         ? { createdAt: -1 }
         : { _id: -1 };
@@ -153,7 +144,7 @@ productRouter.get(
       ...queryFilter,
       ...categoryFilter,
       ...priceFilter,
-      ...ratingFilter,
+      ...brandFilter,
     })
       .sort(sortOrder)
       .skip(pageSize * (page - 1))
@@ -163,7 +154,7 @@ productRouter.get(
       ...queryFilter,
       ...categoryFilter,
       ...priceFilter,
-      ...ratingFilter,
+      ...priceFilter,
     });
     res.send({
       products,
@@ -186,6 +177,7 @@ productRouter.get(
   '/brands',
   expressAsyncHandler(async (req, res) => {
     const brands = await Product.find().distinct('brand');
+    console.log('Brand:', req.query.brand);
     res.send(brands);
   })
 );
@@ -198,6 +190,7 @@ productRouter.get('/slug/:slug', async (req, res) => {
     res.status(404).send({ message: 'Product Not Found' });
   }
 });
+
 productRouter.get('/:id', async (req, res) => {
   const product = await Product.findById(req.params.id);
   if (product) {

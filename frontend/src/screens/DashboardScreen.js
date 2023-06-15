@@ -73,7 +73,7 @@ export default function DashboardScreen() {
                       ? summary.users[0].numUsers
                       : 0}
                   </Card.Title>
-                  <Card.Text> Users</Card.Text>
+                  <Card.Text>Users</Card.Text>
                 </Card.Body>
               </Card>
             </Col>
@@ -85,7 +85,7 @@ export default function DashboardScreen() {
                       ? summary.orders[0].numOrders
                       : 0}
                   </Card.Title>
-                  <Card.Text> Orders</Card.Text>
+                  <Card.Text>Orders</Card.Text>
                 </Card.Body>
               </Card>
             </Col>

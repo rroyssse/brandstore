@@ -47,7 +47,7 @@ function HomeScreen() {
       <Helmet>
         <title>UAFashion</title>
       </Helmet>
-      <h1>Featured products</h1>
+      {/* <h1>Featured products</h1> */}
       <div className="products">
         {loading ? (
           <LoadingBox />
