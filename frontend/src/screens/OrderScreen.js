@@ -203,9 +203,9 @@ export default function OrderScreen() {
               <Card.Title>Shipping</Card.Title>
               <Card.Text>
                 <strong>Name:</strong> {order.shippingAddress.fullName} <br />
-                <strong>Address: </strong> {order.shippingAddress.address},
-                {order.shippingAddress.city}, {order.shippingAddress.postalCode}
-                ,{order.shippingAddress.country}
+                <strong>Address: </strong> {order.shippingAddress.country},{' '}
+                {order.shippingAddress.city}, {order.shippingAddress.address},{' '}
+                {order.shippingAddress.postalCode}
               </Card.Text>
               {order.isDelivered ? (
                 <MessageBox variant="success">
@@ -245,7 +245,12 @@ export default function OrderScreen() {
                           alt={item.name}
                           className="img-fluid rounded img-thumbnail"
                         ></img>{' '}
-                        <Link to={`/product/${item.slug}`}>{item.name}</Link>
+                        <Link
+                          to={`/product/${item.slug}`}
+                          style={{ color: 'black', textDecoration: 'none' }}
+                        >
+                          {item.name}
+                        </Link>
                       </Col>
                       <Col md={3}>
                         <span>{item.quantity}</span>
@@ -307,7 +312,7 @@ export default function OrderScreen() {
                     {loadingPay && <LoadingBox></LoadingBox>}
                   </ListGroup.Item>
                 )}
-                {userInfo.isAdmin && order.isPaid && !order.isDelivered && (
+                {userInfo.isAdmin && !order.isDelivered && (
                   <ListGroup.Item>
                     {loadingDeliver && <LoadingBox></LoadingBox>}
                     <div className="d-grid">

@@ -3,6 +3,7 @@ import Chart from 'react-google-charts';
 import axios from 'axios';
 import { Store } from '../Store';
 import { getError } from '../utils';
+import { Helmet } from 'react-helmet-async';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 import Row from 'react-bootstrap/Row';
@@ -53,6 +54,9 @@ export default function DashboardScreen() {
 
   return (
     <div>
+      <Helmet>
+        <title>Dashboard</title>
+      </Helmet>
       <h1>Dashboard</h1>
       {loading ? (
         <LoadingBox />

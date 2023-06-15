@@ -95,9 +95,9 @@ export default function PlaceOrderScreen() {
               <Card.Title>Shipping</Card.Title>
               <Card.Text>
                 <strong>Name:</strong> {cart.shippingAddress.fullName} <br />
-                <strong>Address: </strong> {cart.shippingAddress.address},
-                {cart.shippingAddress.city}, {cart.shippingAddress.postalCode},
-                {cart.shippingAddress.country}
+                <strong>Address: </strong> {cart.shippingAddress.country},{' '}
+                {cart.shippingAddress.city}, {cart.shippingAddress.address},{' '}
+                {cart.shippingAddress.postalCode}
               </Card.Text>
               <Link to="/shipping">Edit</Link>
             </Card.Body>
@@ -126,7 +126,12 @@ export default function PlaceOrderScreen() {
                           alt={item.name}
                           className="img-fluid rounded img-thumbnail"
                         ></img>{' '}
-                        <Link to={`/product/${item.slug}`}>{item.name}</Link>
+                        <Link
+                          to={`/product/${item.slug}`}
+                          style={{ color: 'black', textDecoration: 'none' }}
+                        >
+                          {item.name}
+                        </Link>
                       </Col>
                       <Col md={3}>
                         <span>{item.quantity}</span>

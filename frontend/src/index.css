@@ -18,7 +18,16 @@ main {
 /*колір кнопок*/
 .btn-primary,
 .btn-outline-primary {
-  background-color: #f0c040;
+  background-color: #856cac;
+  border-color: #856cac;
+  color: #f3f0f7;
+}
+
+.btn-primary:hover,
+.btn-outline-primary:hover {
+  color: #dad3e6;
+  border-color: #282034;
+  background-color: #282034;
 }
 
 .products {
@@ -29,7 +38,7 @@ main {
 
 /*колір зірочок*/
 .rating span {
-  color: #ffc000;
+  color: #8400f0;
 }
 
 .product {
@@ -64,8 +73,8 @@ main {
   color: #a0a0a0;
 }
 .checkout-steps > div.active {
-  border-bottom: 0.2rem solid #f08000;
-  color: #f08000;
+  border-bottom: 0.2rem solid #856cac;
+  color: #856cac;
 }
 .navbar-brand {
   font-weight: bold;
@@ -90,4 +99,35 @@ main {
 }
 .text-bold {
   font-weight: bold;
+}
+.category-box {
+  display: flex;
+  flex-direction: column;
+  color: white;
+  width: 100%;
+  height: 100%;
+  padding: 1rem;
+  background-color: #352b45;
+  font-size: 1.2rem;
+}
+
+.categories {
+  color: white;
+  text-transform: uppercase;
+}
+
+ul.categories a {
+  color: #282034;
+  text-transform: uppercase;
+  text-decoration: none;
+  font-size: 1.2rem;
+}
+
+.categories:hover {
+  color: #282034;
+}
+
+.lists-style {
+  list-style-type: none;
+  color: #282034;
 }

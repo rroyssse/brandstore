@@ -70,11 +70,16 @@ function App() {
       >
         <ToastContainer position="bottom-center" limit={1} />
         <header>
-          <Navbar bg="dark" variant="dark" expand="lg">
+          <Navbar
+            style={{ backgroundColor: ' #282034' }}
+            variant="dark"
+            expand="lg"
+          >
             <Container>
               <Button
-                variant="dark"
-                onClick={() => setSidebarIsOpen(!sidebarIsOpen)}
+                variant="light"
+                onMouseEnter={() => setSidebarIsOpen(!sidebarIsOpen)}
+                className="btn-primary"
               >
                 <i className="fas fa-bars"></i>
               </Button>
@@ -87,7 +92,7 @@ function App() {
                 <SearchBox />
                 <Nav className="me-auto  w-100  justify-content-end">
                   <Link to="/cart" className="nav-link">
-                    Cart
+                    <i class="fa fa-shopping-cart" aria-hidden="true"></i>
                     {cart.cartItems.length > 0 && (
                       <Badge pill bg="danger">
                         {cart.cartItems.reduce((a, c) => a + c.quantity, 0)}
@@ -144,17 +149,21 @@ function App() {
               : 'side-navbar d-flex justify-content-between flex-wrap flex-column'
           }
         >
-          <Nav className="flex-column text-white w-100 p-2">
+          <Nav className="category-box">
             <Nav.Item>
               <strong>Categories</strong>
             </Nav.Item>
             {categories.map((category) => (
               <Nav.Item key={category}>
                 <LinkContainer
-                  to={`search/category=${category}`}
+                  to={{
+                    pathname: '/search',
+                    hash: '#hash',
+                    search: `?category=${category}`,
+                  }}
                   onClick={() => setSidebarIsOpen(false)}
                 >
-                  <Nav.Link>{category}</Nav.Link>
+                  <Nav.Link className="categories">{category}</Nav.Link>
                 </LinkContainer>
               </Nav.Item>
             ))}
@@ -252,7 +261,7 @@ function App() {
           </Container>
         </main>
         <footer>
-          <div className="text-center">All rights reserved</div>
+          <div className="text-center">©2023 UAFashion</div>
         </footer>
       </div>
     </BrowserRouter>

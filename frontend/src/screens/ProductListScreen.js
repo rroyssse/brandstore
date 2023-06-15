@@ -5,6 +5,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import { toast } from 'react-toastify';
+import { Helmet } from 'react-helmet-async';
 import { Store } from '../Store';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
@@ -136,6 +137,9 @@ export default function ProductListScreen() {
 
   return (
     <div>
+      <Helmet>
+        <title>Product List</title>
+      </Helmet>
       <Row>
         <Col>
           <h1>Products</h1>

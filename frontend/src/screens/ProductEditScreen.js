@@ -143,7 +143,7 @@ export default function ProductEditScreen() {
       <Helmet>
         <title>Edit Product ${productId}</title>
       </Helmet>
-      <h1>Edit Product {productId}</h1>
+      <h1>Product {productId}</h1>
 
       {loading ? (
         <LoadingBox></LoadingBox>
@@ -221,8 +221,12 @@ export default function ProductEditScreen() {
             />
           </Form.Group>
           <div className="mb-3">
-            <Button disabled={loadingUpdate} type="submit">
-              Update
+            <Button
+              disabled={loadingUpdate}
+              type="submit"
+              className="btn-primary"
+            >
+              Confirm
             </Button>
             {loadingUpdate && <LoadingBox></LoadingBox>}
           </div>

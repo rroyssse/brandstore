@@ -89,12 +89,9 @@ function ProductScreen() {
               <h1>{product.name}</h1>
             </ListGroup.Item>
             <ListGroup.Item>
-              <Rating
-                rating={product.rating}
-                numReviews={product.numReviews}
-              ></Rating>
+              <h2>Brand: {product.brand}</h2>
             </ListGroup.Item>
-            <ListGroup.Item>Price: ${product.price}</ListGroup.Item>
+            {/* <ListGroup.Item>Price: ${product.price}</ListGroup.Item> */}
             <ListGroup.Item>
               Description: <p>{product.description}</p>
             </ListGroup.Item>

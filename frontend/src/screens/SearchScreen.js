@@ -6,7 +6,6 @@ import { getError } from '../utils';
 import { Helmet } from 'react-helmet-async';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Rating from '../components/Rating';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 import Button from 'react-bootstrap/Button';
@@ -49,36 +48,14 @@ const prices = [
   },
 ];
 
-export const ratings = [
-  {
-    name: '4stars & up',
-    rating: 4,
-  },
-
-  {
-    name: '3stars & up',
-    rating: 3,
-  },
-
-  {
-    name: '2stars & up',
-    rating: 2,
-  },
-
-  {
-    name: '1stars & up',
-    rating: 1,
-  },
-];
-
 export default function SearchScreen() {
   const navigate = useNavigate();
   const { search } = useLocation();
   const sp = new URLSearchParams(search); // /search?category=Shirts
   const category = sp.get('category') || 'all';
+  const brand = sp.get('brand') || 'all';
   const query = sp.get('query') || 'all';
   const price = sp.get('price') || 'all';
-  const rating = sp.get('rating') || 'all';
   const order = sp.get('order') || 'newest';
   const page = sp.get('page') || 1;
 
@@ -92,7 +69,7 @@ export default function SearchScreen() {
     const fetchData = async () => {
       try {
         const { data } = await axios.get(
-          `/api/products/search?page=${page}&query=${query}&category=${category}&price=${price}&rating=${rating}&order=${order}`
+          `/api/products/search?page=${page}&query=${query}&category=${category}&price=${price}&brand=${brand}&order=${order}`
         );
         dispatch({ type: 'FETCH_SUCCESS', payload: data });
       } catch (err) {
@@ -103,13 +80,14 @@ export default function SearchScreen() {
       }
     };
     fetchData();
-  }, [category, error, order, page, price, query, rating]);
+  }, [category, error, order, page, price, query, brand]);
 
   const [categories, setCategories] = useState([]);
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const { data } = await axios.get(`/api/products/categories`);
+        // setCategories(data.sort((a, b) => a.localeCompare(b)));
         setCategories(data);
       } catch (err) {
         toast.error(getError(err));
@@ -118,14 +96,27 @@ export default function SearchScreen() {
     fetchCategories();
   }, [dispatch]);
 
+  const [brands, setBrands] = useState([]);
+  useEffect(() => {
+    const fetchBrands = async () => {
+      try {
+        const { data } = await axios.get(`/api/products/brands`);
+        setBrands(data.sort((a, b) => a.localeCompare(b)));
+      } catch (err) {
+        toast.error(getError(err));
+      }
+    };
+    fetchBrands();
+  }, [dispatch]);
+
   const getFilterUrl = (filter) => {
     const filterPage = filter.page || page;
     const filterCategory = filter.category || category;
     const filterQuery = filter.query || query;
-    const filterRating = filter.rating || rating;
+    const filterBrand = filter.brand || brand;
     const filterPrice = filter.price || price;
     const sortOrder = filter.order || order;
-    return `/search?category=${filterCategory}&query=${filterQuery}&price=${filterPrice}&rating=${filterRating}&order=${sortOrder}&page=${filterPage}`;
+    return `/search?category=${filterCategory}&query=${filterQuery}&price=${filterPrice}&rating=${filterBrand}&order=${sortOrder}&page=${filterPage}`;
   };
   return (
     <div>
@@ -134,9 +125,9 @@ export default function SearchScreen() {
       </Helmet>
       <Row>
         <Col md={3}>
-          <h3>Department</h3>
+          <h3>Category</h3>
           <div>
-            <ul>
+            <ul style={{ listStyleType: 'none' }} className="categories">
               <li>
                 <Link
                   className={'all' === category ? 'text-bold' : ''}
@@ -146,7 +137,7 @@ export default function SearchScreen() {
                 </Link>
               </li>
               {categories.map((c) => (
-                <li key={c}>
+                <li key={c} className="categories">
                   <Link
                     className={c === category ? 'text-bold' : ''}
                     to={getFilterUrl({ category: c })}
@@ -159,7 +150,7 @@ export default function SearchScreen() {
           </div>
           <div>
             <h3>Price</h3>
-            <ul>
+            <ul style={{ listStyleType: 'none' }} className="categories">
               <li>
                 <Link
                   className={'all' === price ? 'text-bold' : ''}
@@ -181,26 +172,27 @@ export default function SearchScreen() {
             </ul>
           </div>
           <div>
-            <h3>Avg. Customer Review</h3>
-            <ul>
-              {ratings.map((r) => (
-                <li key={r.name}>
-                  <Link
-                    to={getFilterUrl({ rating: r.rating })}
-                    className={`${r.rating}` === `${rating}` ? 'text-bold' : ''}
-                  >
-                    <Rating caption={' & up'} rating={r.rating}></Rating>
-                  </Link>
-                </li>
-              ))}
+            <h3>Brand</h3>
+            <ul style={{ listStyleType: 'none' }} className="categories">
               <li>
                 <Link
-                  to={getFilterUrl({ rating: 'all' })}
-                  className={rating === 'all' ? 'text-bold' : ''}
+                  className={'all' === brand ? 'text-bold' : ''}
+                  to={getFilterUrl({ brand: 'all' })}
                 >
-                  <Rating caption={' & up'} rating={0}></Rating>
+                  Any
                 </Link>
               </li>
+              {brands &&
+                brands.map((b) => (
+                  <li key={b} className="categories">
+                    <Link
+                      className={b === brand ? 'text-bold' : ''}
+                      to={getFilterUrl({ brand: b })}
+                    >
+                      {b}
+                    </Link>
+                  </li>
+                ))}
             </ul>
           </div>
         </Col>
@@ -218,10 +210,10 @@ export default function SearchScreen() {
                     {query !== 'all' && ' : ' + query}
                     {category !== 'all' && ' : ' + category}
                     {price !== 'all' && ' : Price ' + price}
-                    {rating !== 'all' && ' : Rating ' + rating + ' & up'}
+                    {brand !== 'all' && ' : Rating ' + brand}
                     {query !== 'all' ||
                     category !== 'all' ||
-                    rating !== 'all' ||
+                    brand !== 'all' ||
                     price !== 'all' ? (
                       <Button
                         variant="light"
@@ -243,7 +235,7 @@ export default function SearchScreen() {
                     <option value="newest">Newest Arrivals</option>
                     <option value="lowest">Price: Low to High</option>
                     <option value="highest">Price: High to Low</option>
-                    <option value="toprated">Avg. Customer Reviews</option>
+                    {/* <option value="toprated">Avg. Customer Reviews</option> */}
                   </select>
                 </Col>
               </Row>

@@ -67,11 +67,11 @@ export default function ShippingAddressScreen() {
               required
             />
           </Form.Group>
-          <Form.Group className="mb-3" controlId="address">
-            <Form.Label>Address</Form.Label>
+          <Form.Group className="mb-3" controlId="country">
+            <Form.Label>Country</Form.Label>
             <Form.Control
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
+              value={country}
+              onChange={(e) => setCountry(e.target.value)}
               required
             />
           </Form.Group>
@@ -83,19 +83,19 @@ export default function ShippingAddressScreen() {
               required
             />
           </Form.Group>
+          <Form.Group className="mb-3" controlId="address">
+            <Form.Label>Address</Form.Label>
+            <Form.Control
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              required
+            />
+          </Form.Group>
           <Form.Group className="mb-3" controlId="postalCode">
             <Form.Label>Postal Code</Form.Label>
             <Form.Control
               value={postalCode}
               onChange={(e) => setPostalCode(e.target.value)}
-              required
-            />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="country">
-            <Form.Label>Country</Form.Label>
-            <Form.Control
-              value={country}
-              onChange={(e) => setCountry(e.target.value)}
               required
             />
           </Form.Group>
