@@ -68,9 +68,6 @@ export default function SearchScreen() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log(
-          `/api/products/search?page=${page}&query=${query}&category=${category}&price=${price}&brand=${brand}&order=${order}`
-        );
         const { data } = await axios.get(
           `/api/products/search?page=${page}&query=${query}&category=${category}&price=${price}&brand=${brand}&order=${order}`
         );

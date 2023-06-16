@@ -59,6 +59,7 @@ export default function ProductEditScreen() {
   const [category, setCategory] = useState('');
   const [countInStock, setCountInStock] = useState('');
   const [brand, setBrand] = useState('');
+  const [fabric, setFabric] = useState('');
   const [description, setDescription] = useState('');
 
   useEffect(() => {
@@ -73,6 +74,7 @@ export default function ProductEditScreen() {
         setCategory(data.category);
         setCountInStock(data.countInStock);
         setBrand(data.brand);
+        setFabric(data.fabric);
         setDescription(data.description);
         dispatch({ type: 'FETCH_SUCCESS' });
       } catch (err) {
@@ -98,6 +100,7 @@ export default function ProductEditScreen() {
           image,
           category,
           brand,
+          fabric,
           countInStock,
           description,
         },
@@ -201,6 +204,14 @@ export default function ProductEditScreen() {
             <Form.Control
               value={brand}
               onChange={(e) => setBrand(e.target.value)}
+              required
+            />
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="fabric">
+            <Form.Label>Fabric</Form.Label>
+            <Form.Control
+              value={fabric}
+              onChange={(e) => setFabric(e.target.value)}
               required
             />
           </Form.Group>
