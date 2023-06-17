@@ -74,6 +74,7 @@ function App() {
             style={{ backgroundColor: ' #282034' }}
             variant="dark"
             expand="lg"
+            fixed="top"
           >
             <Container>
               <Button
@@ -170,7 +171,7 @@ function App() {
           </Nav>
         </div>
         <main>
-          <Container className="mt-3">
+          <Container className="mt-5 pt-3">
             <Routes>
               <Route path="/product/:slug" element={<ProductScreen />} />
               <Route path="/cart" element={<CartScreen />} />

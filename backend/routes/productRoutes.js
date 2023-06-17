@@ -5,9 +5,24 @@ import { isAuth, isAdmin } from '../utils.js';
 
 const productRouter = express.Router();
 
+//кількість продуктів на сторінці
+const PAGE_SIZE = 15;
+
 productRouter.get('/', async (req, res) => {
-  const products = await Product.find();
-  res.send(products);
+  const { query } = req;
+  const page = query.page || 1;
+  const pageSize = query.pageSize || PAGE_SIZE;
+
+  const products = await Product.find()
+    .skip(pageSize * (page - 1))
+    .limit(pageSize);
+  const countProducts = await Product.countDocuments();
+  res.send({
+    products,
+    countProducts,
+    page,
+    pages: Math.ceil(countProducts / pageSize),
+  });
 });
 
 productRouter.post(
@@ -70,9 +85,6 @@ productRouter.delete(
     }
   })
 );
-
-//кількість продуктів на сторінці продактліст
-const PAGE_SIZE = 15;
 
 productRouter.get(
   '/admin',

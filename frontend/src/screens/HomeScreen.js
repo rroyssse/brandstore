@@ -7,7 +7,6 @@ import Product from '../components/Product';
 import { Helmet } from 'react-helmet-async';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
-//import data from '../data';
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -28,42 +27,63 @@ function HomeScreen() {
     loading: true,
     error: '',
   });
-  //const [products, setProducts] = useState([]);
+
+  const [page, setPage] = useState(1);
+  const [pages, setPages] = useState(1);
+
   useEffect(() => {
     const fetchData = async () => {
       dispatch({ type: 'FETCH_REQUEST' });
       try {
-        const result = await axios.get('/api/products');
-        dispatch({ type: 'FETCH_SUCCESS', payload: result.data });
+        const result = await axios.get(`/api/products?page=${page}`);
+        dispatch({ type: 'FETCH_SUCCESS', payload: result.data.products });
+        setPages(result.data.pages);
       } catch (err) {
         dispatch({ type: 'FETCH_FAIL', payload: err.message });
       }
-      //setProducts(result.data);
     };
     fetchData();
-  }, []);
+  }, [page]);
+
+  const navigateToPage = (pageNumber) => {
+    setPage(pageNumber);
+  };
+
   return (
     <div>
       <Helmet>
         <title>UAFashion</title>
       </Helmet>
-      {/* <h1>Featured products</h1> */}
       <div className="products">
         {loading ? (
           <LoadingBox />
         ) : error ? (
           <MessageBox variant="danger">{error}</MessageBox>
         ) : (
-          <Row>
-            {products.map((product) => (
-              <Col sm={6} md={4} lr={3} className="mb-3">
-                <Product product={product}></Product>
-              </Col>
-            ))}
-          </Row>
+          <div>
+            <Row>
+              {products.map((product) => (
+                <Col sm={6} md={4} key={product._id} className="mb-3">
+                  <Product product={product}></Product>
+                </Col>
+              ))}
+            </Row>
+            <div className="pagination">
+              {[...Array(pages).keys()].map((pageNumber) => (
+                <button
+                  key={pageNumber + 1}
+                  className={pageNumber + 1 === page ? 'active' : ''}
+                  onClick={() => navigateToPage(pageNumber + 1)}
+                >
+                  {pageNumber + 1}
+                </button>
+              ))}
+            </div>
+          </div>
         )}
       </div>
     </div>
   );
 }
+
 export default HomeScreen;

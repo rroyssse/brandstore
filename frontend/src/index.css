@@ -131,3 +131,28 @@ ul.categories a {
   list-style-type: none;
   color: #282034;
 }
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.pagination button.hover {
+  border: #000000;
+  border-radius: 5px;
+}
+
+.pagination button {
+  margin: 0 5px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background: #fff;
+}
+
+.pagination button.active {
+  color: #100901;
+  font-weight: bold;
+}
