@@ -152,6 +152,8 @@ function App() {
         >
           <Nav className="category-box">
             <Nav.Item>
+              <br />
+              <br />
               <strong>Categories</strong>
             </Nav.Item>
             {categories.map((category) => (
