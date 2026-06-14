@@ -41,7 +41,7 @@ const reducer = (state, action) => {
 };
 export default function ProductEditScreen() {
   const navigate = useNavigate();
-  const params = useParams(); // /product/:id
+  const params = useParams();
   const { id: productId } = params;
 
   const { state } = useContext(Store);
@@ -53,14 +53,18 @@ export default function ProductEditScreen() {
     });
 
   const [name, setName] = useState('');
+  const [nameUk, setNameUk] = useState('');
   const [slug, setSlug] = useState('');
   const [price, setPrice] = useState('');
   const [image, setImage] = useState('');
   const [category, setCategory] = useState('');
+  const [color, setColor] = useState('');
+  const [tags, setTags] = useState('');
   const [countInStock, setCountInStock] = useState('');
   const [brand, setBrand] = useState('');
   const [fabric, setFabric] = useState('');
   const [description, setDescription] = useState('');
+  const [descriptionUk, setDescriptionUk] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -68,14 +72,18 @@ export default function ProductEditScreen() {
         dispatch({ type: 'FETCH_REQUEST' });
         const { data } = await axios.get(`/api/products/${productId}`);
         setName(data.name);
+        setNameUk(data.nameUk || '');
         setSlug(data.slug);
         setPrice(data.price);
         setImage(data.image);
         setCategory(data.category);
+        setColor(data.color || '');
+        setTags(Array.isArray(data.tags) ? data.tags.join(', ') : '');
         setCountInStock(data.countInStock);
         setBrand(data.brand);
         setFabric(data.fabric);
         setDescription(data.description);
+        setDescriptionUk(data.descriptionUk || '');
         dispatch({ type: 'FETCH_SUCCESS' });
       } catch (err) {
         dispatch({
@@ -95,14 +103,21 @@ export default function ProductEditScreen() {
         {
           _id: productId,
           name,
+          nameUk,
           slug,
           price,
           image,
           category,
+          color,
+          tags: tags
+            .split(',')
+            .map((tag) => tag.trim())
+            .filter(Boolean),
           brand,
           fabric,
           countInStock,
           description,
+          descriptionUk,
         },
         {
           headers: { Authorization: `Bearer ${userInfo.token}` },
@@ -144,7 +159,7 @@ export default function ProductEditScreen() {
   return (
     <Container className="small-container">
       <Helmet>
-        <title>Edit Product ${productId}</title>
+        <title>Edit Product {productId}</title>
       </Helmet>
       <h1>Product {productId}</h1>
 
@@ -155,11 +170,18 @@ export default function ProductEditScreen() {
       ) : (
         <Form onSubmit={submitHandler}>
           <Form.Group className="mb-3" controlId="name">
-            <Form.Label>Name</Form.Label>
+            <Form.Label>Name (EN)</Form.Label>
             <Form.Control
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
+            />
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="nameUk">
+            <Form.Label>Name (UA)</Form.Label>
+            <Form.Control
+              value={nameUk}
+              onChange={(e) => setNameUk(e.target.value)}
             />
           </Form.Group>
           <Form.Group className="mb-3" controlId="slug">
@@ -170,7 +192,7 @@ export default function ProductEditScreen() {
               required
             />
           </Form.Group>
-          <Form.Group className="mb-3" controlId="name">
+          <Form.Group className="mb-3" controlId="price">
             <Form.Label>Price</Form.Label>
             <Form.Control
               value={price}
@@ -199,6 +221,21 @@ export default function ProductEditScreen() {
               required
             />
           </Form.Group>
+          <Form.Group className="mb-3" controlId="color">
+            <Form.Label>Color</Form.Label>
+            <Form.Control
+              value={color}
+              onChange={(e) => setColor(e.target.value)}
+            />
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="tags">
+            <Form.Label>Tags</Form.Label>
+            <Form.Control
+              value={tags}
+              onChange={(e) => setTags(e.target.value)}
+              placeholder="eco, natural fabrics, embroidered"
+            />
+          </Form.Group>
           <Form.Group className="mb-3" controlId="brand">
             <Form.Label>Brand</Form.Label>
             <Form.Control
@@ -224,11 +261,22 @@ export default function ProductEditScreen() {
             />
           </Form.Group>
           <Form.Group className="mb-3" controlId="description">
-            <Form.Label>Description</Form.Label>
+            <Form.Label>Description (EN)</Form.Label>
             <Form.Control
+              as="textarea"
+              rows={3}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               required
+            />
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="descriptionUk">
+            <Form.Label>Description (UA)</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={3}
+              value={descriptionUk}
+              onChange={(e) => setDescriptionUk(e.target.value)}
             />
           </Form.Group>
           <div className="mb-3">

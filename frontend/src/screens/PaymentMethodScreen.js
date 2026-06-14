@@ -5,8 +5,10 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import CheckoutSteps from '../components/CheckoutSteps';
 import { Store } from '../Store';
+import { useTranslation } from '../i18n';
 
 export default function PaymentMethodScreen() {
+  const { t, tv } = useTranslation();
   const navigate = useNavigate();
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const {
@@ -33,15 +35,15 @@ export default function PaymentMethodScreen() {
       <CheckoutSteps step1 step2 step3></CheckoutSteps>
       <div className="container small-container">
         <Helmet>
-          <title>Payment Method</title>
+          <title>{t('checkout.paymentMethod')}</title>
         </Helmet>
-        <h1 className="my-3">Payment Method</h1>
+        <h1 className="my-3">{t('checkout.paymentMethod')}</h1>
         <Form onSubmit={submitHandler}>
           <div className="mb-3">
             <Form.Check
               type="radio"
               id="PayPal"
-              label="PayPal"
+              label={tv('paymentMethod', 'PayPal')}
               value="PayPal"
               checked={paymentMethodName === 'PayPal'}
               onChange={(e) => setPaymentMethod(e.target.value)}
@@ -51,7 +53,7 @@ export default function PaymentMethodScreen() {
             <Form.Check
               type="radio"
               id="PaymentOnReceipt"
-              label="Payment on Receipt"
+              label={tv('paymentMethod', 'PaymentOnReceipt')}
               value="PaymentOnReceipt"
               checked={paymentMethodName === 'PaymentOnReceipt'}
               onChange={(e) => setPaymentMethod(e.target.value)}
@@ -59,7 +61,7 @@ export default function PaymentMethodScreen() {
           </div>
 
           <div className="mb-3">
-            <Button type="submit">Continue</Button>
+            <Button type="submit">{t('common.continue')}</Button>
           </div>
         </Form>
       </div>

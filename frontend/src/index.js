@@ -7,17 +7,20 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { StoreProvider } from './Store';
+import { LanguageProvider } from './i18n';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <StoreProvider>
-      <HelmetProvider>
-        <PayPalScriptProvider deferLoading={true}>
-          <App />
-        </PayPalScriptProvider>
-      </HelmetProvider>
-    </StoreProvider>
+    <LanguageProvider>
+      <StoreProvider>
+        <HelmetProvider>
+          <PayPalScriptProvider deferLoading={true}>
+            <App />
+          </PayPalScriptProvider>
+        </HelmetProvider>
+      </StoreProvider>
+    </LanguageProvider>
   </React.StrictMode>
 );
 

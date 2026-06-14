@@ -8,8 +8,10 @@ import { useContext, useEffect, useState } from 'react';
 import { Store } from '../Store';
 import { toast } from 'react-toastify';
 import { getError } from '../utils';
+import { useTranslation } from '../i18n';
 
 export default function SigninScreen() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { search } = useLocation();
   const redirectInUrl = new URLSearchParams(search).get('redirect');
@@ -44,12 +46,12 @@ export default function SigninScreen() {
   return (
     <Container className="small-container">
       <Helmet>
-        <title>Sign In</title>
+        <title>{t('auth.signIn')}</title>
       </Helmet>
-      <h1 className="my-3">Sign In</h1>
+      <h1 className="my-3">{t('auth.signIn')}</h1>
       <Form onSubmit={submitHandler}>
         <Form.Group className="mb-3" controlId="email">
-          <Form.Label>Email</Form.Label>
+          <Form.Label>{t('auth.email')}</Form.Label>
           <Form.Control
             type="email"
             required
@@ -57,7 +59,7 @@ export default function SigninScreen() {
           />
         </Form.Group>
         <Form.Group className="mb-3" controlId="password">
-          <Form.Label>Password</Form.Label>
+          <Form.Label>{t('auth.password')}</Form.Label>
           <Form.Control
             type="password"
             required
@@ -65,11 +67,13 @@ export default function SigninScreen() {
           />
         </Form.Group>
         <div className="mb-3">
-          <Button type="submit">Sign In</Button>
+          <Button type="submit">{t('auth.signIn')}</Button>
         </div>
         <div className="mb-3">
-          New customer?{' '}
-          <Link to={`/signup?redirect=${redirect}`}>Create your account</Link>
+          {t('auth.newCustomer')}{' '}
+          <Link to={`/signup?redirect=${redirect}`}>
+            {t('auth.createAccount')}
+          </Link>
         </div>
       </Form>
     </Container>

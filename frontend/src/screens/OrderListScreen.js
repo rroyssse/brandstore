@@ -79,7 +79,7 @@ export default function OrderListScreen() {
         toast.success('order deleted successfully');
         dispatch({ type: 'DELETE_SUCCESS' });
       } catch (err) {
-        toast.error(getError(error));
+        toast.error(getError(err));
         dispatch({
           type: 'DELETE_FAIL',
         });

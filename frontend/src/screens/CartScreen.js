@@ -9,8 +9,11 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useTranslation } from '../i18n';
+import { getLocalizedField } from '../utils/productText';
 
 export default function CartScreen() {
+  const { t, language, dictionaryEntries } = useTranslation();
   const navigate = useNavigate();
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const {
@@ -20,7 +23,7 @@ export default function CartScreen() {
   const updateCartHandler = async (item, quantity) => {
     const { data } = await axios.get(`/api/products/${item._id}`);
     if (data.countInStock < quantity) {
-      window.alert('Sorry. Product is out of stock');
+      window.alert(t('product.outOfStockAlert'));
       return;
     }
     ctxDispatch({
@@ -39,14 +42,14 @@ export default function CartScreen() {
   return (
     <div>
       <Helmet>
-        <title>Shopping Cart</title>
+        <title>{t('cart.title')}</title>
       </Helmet>
-      <h1>Shopping Cart</h1>
+      <h1>{t('cart.title')}</h1>
       <Row>
         <Col md={8}>
           {cartItems.length === 0 ? (
             <MessageBox>
-              Cart is empty. <Link to="/">Go Shopping</Link>
+              {t('cart.empty')} <Link to="/">{t('cart.goShopping')}</Link>
             </MessageBox>
           ) : (
             <ListGroup>
@@ -56,10 +59,22 @@ export default function CartScreen() {
                     <Col md={4}>
                       <img
                         src={item.image}
-                        alt={item.name}
+                        alt={getLocalizedField(
+                          item,
+                          'name',
+                          language,
+                          dictionaryEntries
+                        )}
                         className="img-fluid rounded img-thumbnail"
                       ></img>{' '}
-                      <Link to={`/product/${item.slug}`}>{item.name}</Link>
+                      <Link to={`/product/${item.slug}`}>
+                        {getLocalizedField(
+                          item,
+                          'name',
+                          language,
+                          dictionaryEntries
+                        )}
+                      </Link>
                     </Col>
                     <Col md={3}>
                       <Button
@@ -103,8 +118,9 @@ export default function CartScreen() {
               <ListGroup variant="flush">
                 <ListGroup.Item>
                   <h3>
-                    Total ({cartItems.reduce((a, c) => a + c.quantity, 0)}{' '}
-                    items) : $
+                    {t('cart.total')} (
+                    {cartItems.reduce((a, c) => a + c.quantity, 0)}{' '}
+                    {t('cart.items')}) : $
                     {cartItems.reduce((a, c) => a + c.price * c.quantity, 0)}
                   </h3>
                 </ListGroup.Item>
@@ -116,7 +132,7 @@ export default function CartScreen() {
                       onClick={checkoutHandler}
                       disabled={cartItems.length === 0}
                     >
-                      Proceed to Checkout
+                      {t('cart.proceedToCheckout')}
                     </Button>
                   </div>
                 </ListGroup.Item>

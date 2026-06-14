@@ -12,6 +12,8 @@ import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 import { getError } from '../utils';
 import { Store } from '../Store';
+import { useTranslation } from '../i18n';
+import { getLocalizedField } from '../utils/productText';
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -27,6 +29,7 @@ const reducer = (state, action) => {
 };
 
 function ProductScreen() {
+  const { t, language, dictionaryEntries, translateTerm } = useTranslation();
   const navigate = useNavigate();
   const params = useParams();
   const { slug } = params;
@@ -49,6 +52,14 @@ function ProductScreen() {
     fetchData();
   }, [slug]);
 
+  const localizedName = getLocalizedField(
+    product,
+    'name',
+    language,
+    dictionaryEntries
+  );
+  const localizedDescription = getLocalizedField(product, 'description', language);
+
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const { cart } = state;
   const addToCartHandler = async () => {
@@ -56,7 +67,7 @@ function ProductScreen() {
     const quantity = existItem ? existItem.quantity + 1 : 1;
     const { data } = await axios.get(`/api/products/${product._id}`);
     if (data.countInStock < quantity) {
-      window.alert('Sorry. Product is out of stock');
+      window.alert(t('product.outOfStockAlert'));
       return;
     }
     ctxDispatch({
@@ -76,7 +87,7 @@ function ProductScreen() {
           <img
             className="img-large"
             src={product.image}
-            alt={product.name}
+            alt={localizedName}
             style={{ width: '100%', height: 'auto' }}
           ></img>
         </Col>
@@ -84,16 +95,30 @@ function ProductScreen() {
           <ListGroup variant="flush">
             <ListGroup.Item>
               <Helmet>
-                <title>{product.name}</title>
+                <title>{localizedName}</title>
               </Helmet>
-              <h1>{product.name}</h1>
+              <h1>{localizedName}</h1>
             </ListGroup.Item>
             <ListGroup.Item>
-              <h2>Brand: {product.brand}</h2>
+              <h2>
+                {t('product.brand')}: {product.brand}
+              </h2>
             </ListGroup.Item>
-            {/* <ListGroup.Item>Price: ${product.price}</ListGroup.Item> */}
+            {product.color ? (
+              <ListGroup.Item>
+                Color: {translateTerm(product.color, { kind: 'color' })}
+              </ListGroup.Item>
+            ) : null}
+            {product.tags && product.tags.length > 0 ? (
+              <ListGroup.Item>
+                Tags:{' '}
+                {product.tags
+                  .map((tag) => translateTerm(tag, { kind: 'tag' }))
+                  .join(', ')}
+              </ListGroup.Item>
+            ) : null}
             <ListGroup.Item>
-              Description: <p>{product.description}</p>
+              {t('product.description')}: <p>{localizedDescription}</p>
             </ListGroup.Item>
           </ListGroup>
         </Col>
@@ -103,18 +128,18 @@ function ProductScreen() {
               <ListGroup variant="flush">
                 <ListGroup.Item>
                   <Row>
-                    <Col>Price:</Col>
+                    <Col>{t('product.price')}:</Col>
                     <Col>${product.price}</Col>
                   </Row>
                 </ListGroup.Item>
                 <ListGroup.Item>
                   <Row>
-                    <Col>Status:</Col>
+                    <Col>{t('product.status')}:</Col>
                     <Col>
                       {product.countInStock > 0 ? (
-                        <Badge bg="success">In Stock</Badge>
+                        <Badge bg="success">{t('search.inStock')}</Badge>
                       ) : (
-                        <Badge bg="danger">Unavailable</Badge>
+                        <Badge bg="danger">{t('product.unavailable')}</Badge>
                       )}
                     </Col>
                   </Row>
@@ -123,7 +148,7 @@ function ProductScreen() {
                   <ListGroup.Item>
                     <div className="d-grid">
                       <Button onClick={addToCartHandler} variant="primary">
-                        Add to Cart
+                        {t('product.addToCartTitle')}
                       </Button>
                     </div>
                   </ListGroup.Item>

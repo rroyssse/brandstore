@@ -12,6 +12,8 @@ import { getError } from '../utils';
 import { Store } from '../Store';
 import CheckoutSteps from '../components/CheckoutSteps';
 import LoadingBox from '../components/LoadingBox';
+import { useTranslation } from '../i18n';
+import { getLocalizedField } from '../utils/productText';
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -27,6 +29,7 @@ const reducer = (state, action) => {
 };
 
 export default function PlaceOrderScreen() {
+  const { t, tv, language, dictionaryEntries } = useTranslation();
   const navigate = useNavigate();
 
   const [{ loading }, dispatch] = useReducer(reducer, {
@@ -36,7 +39,7 @@ export default function PlaceOrderScreen() {
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const { cart, userInfo } = state;
 
-  const round2 = (num) => Math.round(num * 100 + Number.EPSILON) / 100; // 123.2345 => 123.23
+  const round2 = (num) => Math.round(num * 100 + Number.EPSILON) / 100;
   cart.itemsPrice = round2(
     cart.cartItems.reduce((a, c) => a + c.quantity * c.price, 0)
   );
@@ -54,10 +57,6 @@ export default function PlaceOrderScreen() {
           orderItems: cart.cartItems,
           shippingAddress: cart.shippingAddress,
           paymentMethod: cart.paymentMethod,
-          itemsPrice: cart.itemsPrice,
-          shippingPrice: cart.shippingPrice,
-          discountPrice: cart.discountPrice,
-          totalPrice: cart.totalPrice,
         },
         {
           headers: {
@@ -85,37 +84,40 @@ export default function PlaceOrderScreen() {
     <div>
       <CheckoutSteps step1 step2 step3 step4></CheckoutSteps>
       <Helmet>
-        <title>Preview Order</title>
+        <title>{t('checkout.previewOrder')}</title>
       </Helmet>
-      <h1 className="my-3">Preview Order</h1>
+      <h1 className="my-3">{t('checkout.previewOrder')}</h1>
       <Row>
         <Col md={8}>
           <Card className="mb-3">
             <Card.Body>
-              <Card.Title>Shipping</Card.Title>
+              <Card.Title>{t('order.shipping')}</Card.Title>
               <Card.Text>
-                <strong>Name:</strong> {cart.shippingAddress.fullName} <br />
-                <strong>Address: </strong> {cart.shippingAddress.country},{' '}
-                {cart.shippingAddress.city}, {cart.shippingAddress.address},{' '}
+                <strong>{t('order.name')}:</strong>{' '}
+                {cart.shippingAddress.fullName} <br />
+                <strong>{t('order.address')}: </strong>
+                {cart.shippingAddress.country}, {cart.shippingAddress.city},{' '}
+                {cart.shippingAddress.address},{' '}
                 {cart.shippingAddress.postalCode}
               </Card.Text>
-              <Link to="/shipping">Edit</Link>
+              <Link to="/shipping">{t('common.edit')}</Link>
             </Card.Body>
           </Card>
 
           <Card className="mb-3">
             <Card.Body>
-              <Card.Title>Payment</Card.Title>
+              <Card.Title>{t('order.payment')}</Card.Title>
               <Card.Text>
-                <strong>Method:</strong> {cart.paymentMethod}
+                <strong>{t('order.method')}:</strong>{' '}
+                {tv('paymentMethod', cart.paymentMethod)}
               </Card.Text>
-              <Link to="/payment">Edit</Link>
+              <Link to="/payment">{t('common.edit')}</Link>
             </Card.Body>
           </Card>
 
           <Card className="mb-3">
             <Card.Body>
-              <Card.Title>Items</Card.Title>
+              <Card.Title>{t('order.items')}</Card.Title>
               <ListGroup variant="flush">
                 {cart.cartItems.map((item) => (
                   <ListGroup.Item key={item._id}>
@@ -123,14 +125,24 @@ export default function PlaceOrderScreen() {
                       <Col md={6}>
                         <img
                           src={item.image}
-                          alt={item.name}
+                          alt={getLocalizedField(
+                            item,
+                            'name',
+                            language,
+                            dictionaryEntries
+                          )}
                           className="img-fluid rounded img-thumbnail"
                         ></img>{' '}
                         <Link
                           to={`/product/${item.slug}`}
                           style={{ color: 'black', textDecoration: 'none' }}
                         >
-                          {item.name}
+                          {getLocalizedField(
+                            item,
+                            'name',
+                            language,
+                            dictionaryEntries
+                          )}
                         </Link>
                       </Col>
                       <Col md={3}>
@@ -141,37 +153,37 @@ export default function PlaceOrderScreen() {
                   </ListGroup.Item>
                 ))}
               </ListGroup>
-              <Link to="/cart">Edit</Link>
+              <Link to="/cart">{t('common.edit')}</Link>
             </Card.Body>
           </Card>
         </Col>
         <Col md={4}>
           <Card>
             <Card.Body>
-              <Card.Title>Order Summary</Card.Title>
+              <Card.Title>{t('order.orderSummary')}</Card.Title>
               <ListGroup variant="flush">
                 <ListGroup.Item>
                   <Row>
-                    <Col>Items</Col>
+                    <Col>{t('checkout.items')}</Col>
                     <Col>${cart.itemsPrice.toFixed(2)}</Col>
                   </Row>
                 </ListGroup.Item>
                 <ListGroup.Item>
                   <Row>
-                    <Col>Shipping</Col>
+                    <Col>{t('order.shipping')}</Col>
                     <Col>${cart.shippingPrice.toFixed(2)}</Col>
                   </Row>
                 </ListGroup.Item>
                 <ListGroup.Item>
                   <Row>
-                    <Col>Discounts</Col>
+                    <Col>{t('checkout.discounts')}</Col>
                     <Col>${cart.discountPrice.toFixed(2)}</Col>
                   </Row>
                 </ListGroup.Item>
                 <ListGroup.Item>
                   <Row>
                     <Col>
-                      <strong> Order Total</strong>
+                      <strong>{t('checkout.orderTotal')}</strong>
                     </Col>
                     <Col>
                       <strong>${cart.totalPrice.toFixed(2)}</strong>
@@ -185,7 +197,7 @@ export default function PlaceOrderScreen() {
                       onClick={placeOrderHandler}
                       disabled={cart.cartItems.length === 0}
                     >
-                      Place Order
+                      {t('checkout.placeOrderButton')}
                     </Button>
                   </div>
                   {loading && <LoadingBox></LoadingBox>}

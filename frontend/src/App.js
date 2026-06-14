@@ -33,10 +33,12 @@ import ProductEditScreen from './screens/ProductEditScreen';
 import OrderListScreen from './screens/OrderListScreen';
 import UserListScreen from './screens/UserListScreen';
 import UserEditScreen from './screens/UserEditScreen';
+import { useTranslation } from './i18n';
 
 function App() {
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const { cart, userInfo } = state;
+  const { language, setLanguage, t, tv } = useTranslation();
 
   const signoutHandler = () => {
     ctxDispatch({ type: 'USER_SIGNOUT' });
@@ -71,7 +73,7 @@ function App() {
         <ToastContainer position="bottom-center" limit={1} />
         <header>
           <Navbar
-            style={{ backgroundColor: ' #282034' }}
+            style={{ backgroundColor: 'var(--color-nav)' }}
             variant="dark"
             expand="lg"
             fixed="top"
@@ -79,21 +81,33 @@ function App() {
             <Container>
               <Button
                 variant="light"
-                onMouseEnter={() => setSidebarIsOpen(!sidebarIsOpen)}
+                onClick={() => setSidebarIsOpen((isOpen) => !isOpen)}
                 className="btn-primary"
               >
                 <i className="fas fa-bars"></i>
               </Button>
 
               <LinkContainer to="/">
-                <Navbar.Brand>UAFashion</Navbar.Brand>
+                <Navbar.Brand>{t('app.brand')}</Navbar.Brand>
               </LinkContainer>
               <Navbar.Toggle aria-controls="basic-navbar-nav" />
               <Navbar.Collapse id="basic-navbar-nav">
                 <SearchBox />
                 <Nav className="me-auto  w-100  justify-content-end">
+                  <NavDropdown
+                    title={language.toUpperCase()}
+                    id="language-nav-dropdown"
+                  >
+                    <NavDropdown.Item onClick={() => setLanguage('en')}>
+                      {t('app.languageEnglish')}
+                    </NavDropdown.Item>
+                    <NavDropdown.Item onClick={() => setLanguage('uk')}>
+                      {t('app.languageUkrainian')}
+                    </NavDropdown.Item>
+                  </NavDropdown>
                   <Link to="/cart" className="nav-link">
-                    <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+                    <i className="fa fa-shopping-cart" aria-hidden="true"></i>{' '}
+                    {t('nav.cart')}
                     {cart.cartItems.length > 0 && (
                       <Badge pill bg="danger">
                         {cart.cartItems.reduce((a, c) => a + c.quantity, 0)}
@@ -103,10 +117,14 @@ function App() {
                   {userInfo ? (
                     <NavDropdown title={userInfo.name} id="basic-nav-dropdown">
                       <LinkContainer to="/profile">
-                        <NavDropdown.Item>User Profile</NavDropdown.Item>
+                        <NavDropdown.Item>
+                          {t('nav.userProfile')}
+                        </NavDropdown.Item>
                       </LinkContainer>
                       <LinkContainer to="/orderhistory">
-                        <NavDropdown.Item>Order History</NavDropdown.Item>
+                        <NavDropdown.Item>
+                          {t('nav.orderHistory')}
+                        </NavDropdown.Item>
                       </LinkContainer>
                       <NavDropdown.Divider />
                       <Link
@@ -114,27 +132,29 @@ function App() {
                         to="#signout"
                         onClick={signoutHandler}
                       >
-                        Sign Out
+                        {t('nav.signOut')}
                       </Link>
                     </NavDropdown>
                   ) : (
                     <Link className="nav-link" to="/signin">
-                      Sign In
+                      {t('nav.signIn')}
                     </Link>
                   )}
                   {userInfo && userInfo.isAdmin && (
-                    <NavDropdown title="Admin" id="admin-nav-dropdown">
+                    <NavDropdown title={t('app.admin')} id="admin-nav-dropdown">
                       <LinkContainer to="/admin/dashboard">
-                        <NavDropdown.Item>Dashboard</NavDropdown.Item>
+                        <NavDropdown.Item>
+                          {t('nav.dashboard')}
+                        </NavDropdown.Item>
                       </LinkContainer>
                       <LinkContainer to="/admin/products">
-                        <NavDropdown.Item>Products</NavDropdown.Item>
+                        <NavDropdown.Item>{t('nav.products')}</NavDropdown.Item>
                       </LinkContainer>
                       <LinkContainer to="/admin/orders">
-                        <NavDropdown.Item>Orders</NavDropdown.Item>
+                        <NavDropdown.Item>{t('nav.orders')}</NavDropdown.Item>
                       </LinkContainer>
                       <LinkContainer to="/admin/users">
-                        <NavDropdown.Item>Users</NavDropdown.Item>
+                        <NavDropdown.Item>{t('nav.users')}</NavDropdown.Item>
                       </LinkContainer>
                     </NavDropdown>
                   )}
@@ -143,6 +163,12 @@ function App() {
             </Container>
           </Navbar>
         </header>
+        {sidebarIsOpen && (
+          <div
+            className="sidebar-backdrop"
+            onClick={() => setSidebarIsOpen(false)}
+          ></div>
+        )}
         <div
           className={
             sidebarIsOpen
@@ -152,9 +178,7 @@ function App() {
         >
           <Nav className="category-box">
             <Nav.Item>
-              <br />
-              <br />
-              <strong>Categories</strong>
+              <strong>{t('app.categories')}</strong>
             </Nav.Item>
             {categories.map((category) => (
               <Nav.Item key={category}>
@@ -166,13 +190,15 @@ function App() {
                   }}
                   onClick={() => setSidebarIsOpen(false)}
                 >
-                  <Nav.Link className="categories">{category}</Nav.Link>
+                  <Nav.Link className="categories">
+                    {tv('category', category)}
+                  </Nav.Link>
                 </LinkContainer>
               </Nav.Item>
             ))}
           </Nav>
         </div>
-        <main>
+        <main className={sidebarIsOpen ? 'main-content main-content--shifted' : 'main-content'}>
           <Container className="mt-5 pt-3">
             <Routes>
               <Route path="/product/:slug" element={<ProductScreen />} />
@@ -210,7 +236,6 @@ function App() {
                 element={<ShippingAddressScreen />}
               ></Route>
               <Route path="/payment" element={<PaymentMethodScreen />}></Route>
-              {/* Admin Routes */}
               <Route
                 path="/admin/dashboard"
                 element={
@@ -264,7 +289,7 @@ function App() {
           </Container>
         </main>
         <footer>
-          <div className="text-center">©2023 UAFashion</div>
+          <div className="text-center">{t('app.footer')}</div>
         </footer>
       </div>
     </BrowserRouter>

@@ -6,6 +6,9 @@ import Product from '../models/productModel.js';
 import { isAuth, isAdmin } from '../utils.js';
 
 const orderRouter = express.Router();
+const canAccessOrder = (order, user) =>
+  user.isAdmin || order.user.toString() === user._id;
+const round2 = (num) => Math.round(num * 100 + Number.EPSILON) / 100;
 
 orderRouter.get(
   '/',
@@ -21,14 +24,63 @@ orderRouter.post(
   '/',
   isAuth,
   expressAsyncHandler(async (req, res) => {
+    if (!req.body.orderItems || req.body.orderItems.length === 0) {
+      return res.status(400).send({ message: 'Cart is empty' });
+    }
+
+    const productIds = req.body.orderItems.map((item) => item._id);
+    const products = await Product.find({ _id: { $in: productIds } });
+    const productsById = new Map(
+      products.map((product) => [product._id.toString(), product])
+    );
+
+    const orderItems = [];
+
+    for (const item of req.body.orderItems) {
+      const product = productsById.get(item._id);
+
+      if (!product) {
+        return res.status(404).send({ message: `Product not found: ${item._id}` });
+      }
+
+      if (!item.quantity || item.quantity < 1) {
+        return res
+          .status(400)
+          .send({ message: `Invalid quantity for product: ${product.name}` });
+      }
+
+      if (product.countInStock < item.quantity) {
+        return res
+          .status(400)
+          .send({ message: `Product out of stock: ${product.name}` });
+      }
+
+      orderItems.push({
+        slug: product.slug,
+        name: product.name,
+        nameUk: product.nameUk || '',
+        quantity: item.quantity,
+        image: product.image,
+        price: product.price,
+        product: product._id,
+      });
+    }
+
+    const itemsPrice = round2(
+      orderItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+    );
+    const shippingPrice = itemsPrice > 100 ? round2(0) : round2(10);
+    const discountPrice = round2(0.05 * itemsPrice);
+    const totalPrice = round2(itemsPrice + shippingPrice - discountPrice);
+
     const newOrder = new Order({
-      orderItems: req.body.orderItems.map((x) => ({ ...x, product: x._id })),
+      orderItems,
       shippingAddress: req.body.shippingAddress,
       paymentMethod: req.body.paymentMethod,
-      itemsPrice: req.body.itemsPrice,
-      shippingPrice: req.body.shippingPrice,
-      discountPrice: req.body.discountPrice,
-      totalPrice: req.body.totalPrice,
+      itemsPrice,
+      shippingPrice,
+      discountPrice,
+      totalPrice,
       user: req.user._id,
     });
 
@@ -96,6 +148,9 @@ orderRouter.get(
   expressAsyncHandler(async (req, res) => {
     const order = await Order.findById(req.params.id);
     if (order) {
+      if (!canAccessOrder(order, req.user)) {
+        return res.status(403).send({ message: 'Forbidden' });
+      }
       res.send(order);
     } else {
       res.status(404).send({ message: 'Order Not Found' });
@@ -106,6 +161,7 @@ orderRouter.get(
 orderRouter.put(
   '/:id/deliver',
   isAuth,
+  isAdmin,
   expressAsyncHandler(async (req, res) => {
     const order = await Order.findById(req.params.id);
     if (order) {
@@ -125,6 +181,9 @@ orderRouter.put(
   expressAsyncHandler(async (req, res) => {
     const order = await Order.findById(req.params.id);
     if (order) {
+      if (!canAccessOrder(order, req.user)) {
+        return res.status(403).send({ message: 'Forbidden' });
+      }
       order.isPaid = true;
       order.paidAt = Date.now();
       order.paymentResult = {

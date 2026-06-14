@@ -14,6 +14,8 @@ import MessageBox from '../components/MessageBox';
 import { Store } from '../Store';
 import { getError } from '../utils';
 import { toast } from 'react-toastify';
+import { useTranslation } from '../i18n';
+import { getLocalizedField } from '../utils/productText';
 
 function reducer(state, action) {
   switch (action.type) {
@@ -48,6 +50,7 @@ function reducer(state, action) {
   }
 }
 export default function OrderScreen() {
+  const { t, tv, language, dictionaryEntries } = useTranslation();
   const { state } = useContext(Store);
   const { userInfo } = state;
 
@@ -102,7 +105,7 @@ export default function OrderScreen() {
           }
         );
         dispatch({ type: 'PAY_SUCCESS', payload: data });
-        toast.success('Order is paid');
+        toast.success(t('order.orderPaid'));
       } catch (err) {
         dispatch({ type: 'PAY_FAIL', payload: getError(err) });
         toast.error(getError(err));
@@ -179,7 +182,7 @@ export default function OrderScreen() {
         }
       );
       dispatch({ type: 'DELIVER_SUCCESS', payload: data });
-      toast.success('Order is delivered');
+      toast.success(t('order.orderDelivered'));
     } catch (err) {
       toast.error(getError(err));
       dispatch({ type: 'DELIVER_FAIL' });
@@ -193,48 +196,55 @@ export default function OrderScreen() {
   ) : (
     <div>
       <Helmet>
-        <title>Order {orderId}</title>
+        <title>
+          {t('order.title')} {orderId}
+        </title>
       </Helmet>
-      <h1 className="my-3">Order {orderId}</h1>
+      <h1 className="my-3">
+        {t('order.title')} {orderId}
+      </h1>
       <Row>
         <Col md={8}>
           <Card className="mb-3">
             <Card.Body>
-              <Card.Title>Shipping</Card.Title>
+              <Card.Title>{t('order.shipping')}</Card.Title>
               <Card.Text>
-                <strong>Name:</strong> {order.shippingAddress.fullName} <br />
-                <strong>Address: </strong> {order.shippingAddress.country},{' '}
-                {order.shippingAddress.city}, {order.shippingAddress.address},{' '}
+                <strong>{t('order.name')}:</strong>{' '}
+                {order.shippingAddress.fullName} <br />
+                <strong>{t('order.address')}: </strong>
+                {order.shippingAddress.country}, {order.shippingAddress.city},{' '}
+                {order.shippingAddress.address},{' '}
                 {order.shippingAddress.postalCode}
               </Card.Text>
               {order.isDelivered ? (
                 <MessageBox variant="success">
-                  Delivered at {order.deliveredAt}
+                  {t('order.deliveredAt')} {order.deliveredAt}
                 </MessageBox>
               ) : (
-                <MessageBox variant="danger">Not Delivered</MessageBox>
+                <MessageBox variant="danger">{t('order.notDelivered')}</MessageBox>
               )}
             </Card.Body>
           </Card>
           <Card className="mb-3">
             <Card.Body>
-              <Card.Title>Payment</Card.Title>
+              <Card.Title>{t('order.payment')}</Card.Title>
               <Card.Text>
-                <strong>Method:</strong> {order.paymentMethod}
+                <strong>{t('order.method')}:</strong>{' '}
+                {tv('paymentMethod', order.paymentMethod)}
               </Card.Text>
               {order.isPaid ? (
                 <MessageBox variant="success">
-                  Paid at {order.paidAt}
+                  {t('order.paidAt')} {order.paidAt}
                 </MessageBox>
               ) : (
-                <MessageBox variant="danger">Not Paid</MessageBox>
+                <MessageBox variant="danger">{t('order.notPaid')}</MessageBox>
               )}
             </Card.Body>
           </Card>
 
           <Card className="mb-3">
             <Card.Body>
-              <Card.Title>Items</Card.Title>
+              <Card.Title>{t('order.items')}</Card.Title>
               <ListGroup variant="flush">
                 {order.orderItems.map((item) => (
                   <ListGroup.Item key={item._id}>
@@ -242,14 +252,24 @@ export default function OrderScreen() {
                       <Col md={6}>
                         <img
                           src={item.image}
-                          alt={item.name}
+                          alt={getLocalizedField(
+                            item,
+                            'name',
+                            language,
+                            dictionaryEntries
+                          )}
                           className="img-fluid rounded img-thumbnail"
                         ></img>{' '}
                         <Link
                           to={`/product/${item.slug}`}
                           style={{ color: 'black', textDecoration: 'none' }}
                         >
-                          {item.name}
+                          {getLocalizedField(
+                            item,
+                            'name',
+                            language,
+                            dictionaryEntries
+                          )}
                         </Link>
                       </Col>
                       <Col md={3}>
@@ -266,30 +286,30 @@ export default function OrderScreen() {
         <Col md={4}>
           <Card className="mb-3">
             <Card.Body>
-              <Card.Title>Order Summary</Card.Title>
+              <Card.Title>{t('order.orderSummary')}</Card.Title>
               <ListGroup variant="flush">
                 <ListGroup.Item>
                   <Row>
-                    <Col>Items</Col>
+                    <Col>{t('checkout.items')}</Col>
                     <Col>${order.itemsPrice.toFixed(2)}</Col>
                   </Row>
                 </ListGroup.Item>
                 <ListGroup.Item>
                   <Row>
-                    <Col>Shipping</Col>
+                    <Col>{t('order.shipping')}</Col>
                     <Col>${order.shippingPrice.toFixed(2)}</Col>
                   </Row>
                 </ListGroup.Item>
                 <ListGroup.Item>
                   <Row>
-                    <Col>Discounts</Col>
+                    <Col>{t('checkout.discounts')}</Col>
                     <Col>${order.discountPrice.toFixed(2)}</Col>
                   </Row>
                 </ListGroup.Item>
                 <ListGroup.Item>
                   <Row>
                     <Col>
-                      <strong> Order Total</strong>
+                      <strong>{t('checkout.orderTotal')}</strong>
                     </Col>
                     <Col>
                       <strong>${order.totalPrice.toFixed(2)}</strong>
@@ -317,7 +337,7 @@ export default function OrderScreen() {
                     {loadingDeliver && <LoadingBox></LoadingBox>}
                     <div className="d-grid">
                       <Button type="button" onClick={deliverOrderHandler}>
-                        Deliver Order
+                        {t('order.deliverOrder')}
                       </Button>
                     </div>
                   </ListGroup.Item>

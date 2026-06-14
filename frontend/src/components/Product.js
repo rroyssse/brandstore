@@ -4,9 +4,18 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useContext } from 'react';
 import { Store } from '../Store';
+import { useTranslation } from '../i18n';
+import { getLocalizedField } from '../utils/productText';
 
 function Product(props) {
   const { product } = props;
+  const { t, language, dictionaryEntries } = useTranslation();
+  const localizedName = getLocalizedField(
+    product,
+    'name',
+    language,
+    dictionaryEntries
+  );
 
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const {
@@ -18,7 +27,7 @@ function Product(props) {
     const quantity = existItem ? existItem.quantity + 1 : 1;
     const { data } = await axios.get(`/api/products/${item._id}`);
     if (data.countInStock < quantity) {
-      window.alert('Sorry. Product is out of stock');
+      window.alert(t('product.outOfStockAlert'));
       return;
     }
     ctxDispatch({
@@ -28,31 +37,36 @@ function Product(props) {
   };
 
   return (
-    <Card key={product.slug} className="h-100">
+    <Card key={product.slug} className="h-100 product-card">
       <Link to={`/product/${product.slug}`}>
         <img
           src={product.image}
-          className="card-img-top"
-          alt={product.name}
-          style={{ width: '100%', height: 'auto' }}
+          className="card-img-top product-card__image"
+          alt={localizedName}
         />
       </Link>
-      <Card.Body>
+      <Card.Body className="product-card__body">
         <Link
           to={`/product/${product.slug}`}
-          style={{ color: 'black', textDecoration: 'none' }}
+          className="product-card__title-link"
         >
-          <Card.Title>{product.name}</Card.Title>
+          <Card.Title className="product-card__title">
+            {localizedName}
+          </Card.Title>
         </Link>
-        <Card.Text>{product.brand}</Card.Text>
-        <Card.Text>${product.price}</Card.Text>
-        {product.countInStock === 0 ? (
-          <Button variant="light" disabled>
-            Out of stock
-          </Button>
-        ) : (
-          <Button onClick={() => addToCartHandler(product)}>Add to cart</Button>
-        )}
+        <Card.Text className="product-card__meta">{product.brand}</Card.Text>
+        <Card.Text className="product-card__price">${product.price}</Card.Text>
+        <div className="product-card__actions">
+          {product.countInStock === 0 ? (
+            <Button variant="light" disabled>
+              {t('product.outOfStock')}
+            </Button>
+          ) : (
+            <Button onClick={() => addToCartHandler(product)}>
+              {t('product.addToCart')}
+            </Button>
+          )}
+        </div>
       </Card.Body>
     </Card>
   );

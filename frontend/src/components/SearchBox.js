@@ -4,14 +4,28 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import FormControl from 'react-bootstrap/FormControl';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from '../i18n';
 
 export default function SearchBox() {
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
+  const { t } = useTranslation();
+
   const submitHandler = (e) => {
     e.preventDefault();
-    navigate(query ? `/search/?query=${query}` : '/search');
-    //e.target.reset();
+    const trimmedQuery = query.trim();
+    if (!trimmedQuery) {
+      navigate('/search');
+      return;
+    }
+
+    const params = new URLSearchParams({
+      query: trimmedQuery,
+      order: 'newest',
+      page: '1',
+    });
+
+    navigate(`/search?${params.toString()}`);
   };
 
   return (
@@ -22,8 +36,8 @@ export default function SearchBox() {
           name="q"
           id="q"
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="search products..."
-          aria-label="Search Products"
+          placeholder={t('search.placeholder')}
+          aria-label={t('search.title')}
           aria-describedby="button-search"
         ></FormControl>
         <Button variant="outline-primary" type="submit" id="button-search">
